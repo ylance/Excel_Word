@@ -17,15 +17,16 @@ import org.apache.poi.ss.usermodel.Sheet;
 
 public class BudgetReader1 {
 	//TODO:添加资源关闭语句
-	private String excelpath;
-	private String excelpath2;
-	private String path1;
-	private String path2;
+	private String excelPath = "testfiles\\ysb_final.xls";
+	private String excelPath2 = "testfiles\\3G4G工程基站预算基础信息表.xls";
+	private String path1 ="";
+	private String path2 ="";
 	
 	public BudgetReader1(String path1, String path2){
 		this.path1 = path1;
 		this.path2 = path2;
 	}
+	
 	
 	public Map<String, Map<String, String>> get3G4Gjcxx(String path) throws FileNotFoundException, IOException{
 		//获取3G4G工程预算基础信息表里面基础信息sheet中的  工程项目 以及对应的工程信息  外层map的键对应的是站号， 内层map对应的信息是id及取值
@@ -145,7 +146,6 @@ public class BudgetReader1 {
 		//通过遍历从B3表中读取的信息，结合从3G4G表中读取的数据，生成最终的真实数据
 		Map<String, List<String>> results = new LinkedHashMap<String,  List<String>>();
 		String zh = getZhFrom4GYsb();
-		//System.out.println(zh);
 		String key_index = "";
 		String values_inner = "";
 		Map<String, String> map_data = allDatas.get(zh);
@@ -166,21 +166,25 @@ public class BudgetReader1 {
 	
 	
 	public String getZhFrom4GYsb() throws IOException{
+		System.out.println(path1+"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println(path2+"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		
 		//预算表中  第三行 B列的名称为： 单项工程名称:SXZH001TL新建、共址2G、共址其他运营商的(F)（D)宏站基站
 		//path1: 预算表   path2 3g4g基础信息
 		String results = "";
 		String result2 = "";
-		FileInputStream fise = new FileInputStream(path1);
+		
+		FileInputStream fise = new FileInputStream(excelPath);
 		HSSFWorkbook wb = new HSSFWorkbook(fise);
-		HSSFWorkbook wb2 = new HSSFWorkbook(new FileInputStream(path2));
+		HSSFWorkbook wb2 = new HSSFWorkbook(new FileInputStream(excelPath2));
 		
 		HSSFFormulaEvaluator e= new HSSFFormulaEvaluator(wb);
 		HSSFFormulaEvaluator e2= new HSSFFormulaEvaluator(wb2);
 		
 		//TODO: 将此处的文件名替换为从参数读取的文件名
 		String [] strArray = new String[2];
-		String[] splits = path1.split("/");
-		String[] splits2 = path2.split("/");
+		String[] splits = path1.split("\\\\");
+		String[] splits2 = path2.split("\\\\");
 		strArray[0] = splits[splits.length-1];
 		strArray[1] = splits2[splits2.length-1];
 		HSSFFormulaEvaluator[] evals = new HSSFFormulaEvaluator[2];
@@ -221,8 +225,8 @@ public class BudgetReader1 {
 		HSSFFormulaEvaluator e2= new HSSFFormulaEvaluator(wb2);
 		
 		String [] strArray = new String[2];
-		String[] splits = path1.split("\\");
-		String[] splits2 = path2.split("\\");
+		String[] splits = path1.split("\\\\");
+		String[] splits2 = path2.split("\\\\");
 		strArray[0] = splits[splits.length-1];
 		strArray[1] = splits2[splits2.length-1];
 		HSSFFormulaEvaluator[] evals = new HSSFFormulaEvaluator[2];
@@ -267,9 +271,9 @@ public class BudgetReader1 {
 		}
 	}*/
 	
-	public static void main(String[] args) {
-		String path1 = "testfiles/ysb_final.xls";
-		String path2 = "testfiles/3G4G工程基站预算基础信息表.xls";
+/*	public static void main(String[] args) {
+		String path1 = "testfiles\\ysb_final.xls";
+		String path2 = "testfiles\\3G4G工程基站预算基础信息表.xls";
 		BudgetReader1 ub = new BudgetReader1(path1, path2);
 		try {
 			Map<String, Map<String, String>> data_all = ub.get3G4Gjcxx(path2);
@@ -279,5 +283,5 @@ public class BudgetReader1 {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}*/
 }
