@@ -31,7 +31,7 @@ public class MainMenu {
 			}
 		});
 	}
-
+ 
 	/**
 	 * Create the application.
 	 */

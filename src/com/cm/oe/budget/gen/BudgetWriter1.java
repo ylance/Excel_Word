@@ -33,22 +33,19 @@ import com.cm.oe.test.ReadExcel;
 import com.cm.oe.test.ReadExcelTable;
 
 public class BudgetWriter1 {
-	private String path1;
-	private String path2 ;
+	public String Path ;
+	public String path2;
 	private String tablePath = "testfiles/tables.xls";
 	private String excelPath = "testfiles/testall.xls";
 	private String output = "testfiles/";
-	private BudgetReader1 ub = new BudgetReader1(path1, path2);
-	private BudgetReader2 ub2 = new BudgetReader2(path1, path2);
-	private ReadExcelTable ret = new ReadExcelTable();
-	private ReadExcel re = new ReadExcel();
 
-	public BudgetWriter1(String path1, String path2, String tablePath, String excelPath, String output) {
-		this.path1 = path1;
+	public BudgetWriter1(String Path, String path2, String tablePath, String excelPath, String output) {
+		this.Path = Path;
 		this.path2 = path2;
 		this.tablePath = tablePath;
 		this.excelPath = excelPath;
 		this.output = output;
+		
 	}
 
 	/*public static void main(String[] args) throws Exception {
@@ -61,15 +58,22 @@ public class BudgetWriter1 {
 		bw.testReadByDoc();
 	}
 */
-	public void testReadByDoc() throws Exception {
+
+	public  void testReadByDoc() throws Exception {
+		System.out.println(Path +"!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println(path2+"!!!!!!!!!!!!!!!!!!!!!!!!");
+		BudgetReader1 ub = new BudgetReader1(Path, path2);
+		BudgetReader2 ub2= new BudgetReader2(Path, path2);
+		ReadExcelTable ret= new ReadExcelTable();
+		ReadExcel re = new ReadExcel();
 		Map<Integer, List<String>> excelmap = new HashMap<Integer, List<String>>();
 		Map<Integer, List<String>> BBUtablemap = ret.readBBUinExcel(tablePath, excelPath);
 		Map<Integer, List<String>> RRUtablemap = ret.readRRUinExcel(tablePath, excelPath);
 		Map<Integer, List<String>> Antennatablemap = ret.readAntennaIntables(tablePath, excelPath);
 		Map<Integer, String> AZHoLa = ret.anzhuang(tablePath, excelPath);
 		Map<String, Map<String, String>> data_all = ub.get3G4Gjcxx(path2);
-		Map<String, List<String>> data_b3 = ub.getB3(path1);
-		Map<String, List<String>> datas_map = ub.getB3JData(data_all, data_b3, path1, path2);
+		Map<String, List<String>> data_b3 = ub.getB3(Path);
+		Map<String, List<String>> datas_map = ub.getB3JData(data_all, data_b3, Path, path2);
 		FileInputStream fise = new FileInputStream(excelPath);
 		HSSFWorkbook wb = new HSSFWorkbook(fise);
 		Sheet sheet = wb.getSheetAt(0);
@@ -283,6 +287,7 @@ public class BudgetWriter1 {
 
 			String zh = ub2.getZhFrom4GYsb();
 			List<String> datas = ub2.readExcel(zh);
+			
 			if (name.toString().equals("信源站") || name.toString().equals("小基站")) {
 				table = tables.get(5);
 			} else if(name.toString().equals("宏基站")||name.toString().equals("拉远站")){
@@ -294,8 +299,9 @@ public class BudgetWriter1 {
 			tableOneRowTwo.setHeight(11);
 			int k = 0;
 			for (String values : datas) {
-				setCellText(tableOneRowTwo.getCell(k), values, "FFFFFF", 21);
-				k++;
+				System.out.print(values);
+				//setCellText(tableOneRowTwo.getCell(k), values, "FFFFFF", 21);
+				//k++;
 			}
 
 //			datas = ub3.readExcel(zh);

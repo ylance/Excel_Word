@@ -19,11 +19,11 @@ public class BudgetReader1 {
 	//TODO:添加资源关闭语句
 	private String excelPath = "testfiles\\ysb_final.xls";
 	private String excelPath2 = "testfiles\\3G4G工程基站预算基础信息表.xls";
-	private String path1 ="";
+	private String Path ="";
 	private String path2 ="";
 	
-	public BudgetReader1(String path1, String path2){
-		this.path1 = path1;
+	public BudgetReader1(String Path, String path2){
+		this.Path = Path;
 		this.path2 = path2;
 	}
 	
@@ -166,8 +166,6 @@ public class BudgetReader1 {
 	
 	
 	public String getZhFrom4GYsb() throws IOException{
-		System.out.println(path1+"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		System.out.println(path2+"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		
 		//预算表中  第三行 B列的名称为： 单项工程名称:SXZH001TL新建、共址2G、共址其他运营商的(F)（D)宏站基站
 		//path1: 预算表   path2 3g4g基础信息
@@ -183,7 +181,7 @@ public class BudgetReader1 {
 		
 		//TODO: 将此处的文件名替换为从参数读取的文件名
 		String [] strArray = new String[2];
-		String[] splits = path1.split("\\\\");
+		String[] splits = Path.split("\\\\");
 		String[] splits2 = path2.split("\\\\");
 		strArray[0] = splits[splits.length-1];
 		strArray[1] = splits2[splits2.length-1];
@@ -217,7 +215,7 @@ public class BudgetReader1 {
 	}
 	
 	public void readExcel() throws IOException{
-		FileInputStream fise = new FileInputStream(path1);
+		FileInputStream fise = new FileInputStream(Path);
 		HSSFWorkbook wb = new HSSFWorkbook(fise);
 		HSSFWorkbook wb2 = new HSSFWorkbook(new FileInputStream(path2));
 		
@@ -225,7 +223,7 @@ public class BudgetReader1 {
 		HSSFFormulaEvaluator e2= new HSSFFormulaEvaluator(wb2);
 		
 		String [] strArray = new String[2];
-		String[] splits = path1.split("\\\\");
+		String[] splits = Path.split("\\\\");
 		String[] splits2 = path2.split("\\\\");
 		strArray[0] = splits[splits.length-1];
 		strArray[1] = splits2[splits2.length-1];
@@ -271,7 +269,7 @@ public class BudgetReader1 {
 		}
 	}*/
 	
-/*	public static void main(String[] args) {
+	public static void main(String[] args) {
 		String path1 = "testfiles\\ysb_final.xls";
 		String path2 = "testfiles\\3G4G工程基站预算基础信息表.xls";
 		BudgetReader1 ub = new BudgetReader1(path1, path2);
@@ -283,5 +281,5 @@ public class BudgetReader1 {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}*/
+	}
 }

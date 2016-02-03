@@ -1,19 +1,14 @@
 package com.cm.oe.ui;
 
-import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -23,16 +18,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
-import org.apache.poi.hssf.record.PageBreakRecord.Break;
-import org.apache.poi.hssf.util.HSSFColor.ROSE;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
-
 import com.cm.oe.budget.gen.BudgetWriter1;
 import com.cm.oe.test.ReadExcel;
-import com.cm.oe.test.ReadExcelTable;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
 
 public class MainPathCreate {
 
@@ -43,7 +30,7 @@ public class MainPathCreate {
 	public JTextField cText = null;
 	public JTextField dText = null;
 	JProgressBar progressBar = null;
-
+	
 	/**
 	 * Launch the application.
 	 */
@@ -190,8 +177,9 @@ public class MainPathCreate {
 							for (int i = 1; i < zhs.size(); i++) {
 								//System.out.println(keys.contains(zhs.get(i).trim()));
 								if(keys.contains(zhs.get(i).trim())){
-									String Path = map.get(zhs.get(i).trim());
-									xwpf = new BudgetWriter1(Path, path2, tablePath, excelPath, output);
+								String Path = map.get(zhs.get(i).trim());
+								xwpf = new BudgetWriter1(Path, path2, tablePath, excelPath, output);
+								xwpf.testReadByDoc();
 								}else if(!keys.contains(zhs.get(i).trim())){
 									JOptionPane.showMessageDialog(frame, "汇总表第"+(i+1)+"行，请输入正确的站号！");
 								throw NullPointerException;
@@ -205,7 +193,7 @@ public class MainPathCreate {
 							frame1.add(label);
 							frame1.setVisible(true);
 
-							xwpf.testReadByDoc();
+							
 							flag = true;
 							if (flag) {
 								frame1.setVisible(false);

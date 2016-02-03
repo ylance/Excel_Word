@@ -44,8 +44,8 @@ public class BudgetReader3 {
 		
 		//TODO: 将此处的文件名替换为从参数读取的文件名
 		String [] strArray = new String[2];
-		String[] splits = excelPath.split("/");
-		String[] splits2 = excelPath2.split("/");
+		String[] splits = excelPath.split("\\\\");
+		String[] splits2 = excelPath2.split("\\\\");
 		strArray[0] = splits[splits.length-1];
 		strArray[1] = splits2[splits2.length-1];
 		HSSFFormulaEvaluator[] evals = new HSSFFormulaEvaluator[2];
