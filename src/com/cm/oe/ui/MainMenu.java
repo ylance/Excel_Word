@@ -11,6 +11,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.SwingConstants;
+import java.awt.Font;
 
 public class MainMenu {
 
@@ -31,7 +32,7 @@ public class MainMenu {
 			}
 		});
 	}
- 
+
 	/**
 	 * Create the application.
 	 */
@@ -48,10 +49,11 @@ public class MainMenu {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("文献管理工具");
+		JLabel lblNewLabel = new JLabel("文 档 管 理 系 统");
+		lblNewLabel.setFont(new Font("宋体", Font.BOLD | Font.ITALIC, 26));
 		lblNewLabel.setBackground(Color.BLACK);
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(117, 100, 178, 15);
+		lblNewLabel.setBounds(58, 53, 304, 93);
 		frame.getContentPane().add(lblNewLabel);
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -68,12 +70,20 @@ public class MainMenu {
 		});
 		mnNewMenu.add(mntmNewMenuItem);
 		
-		JMenuItem mntmNewMenuItem_1 = new JMenuItem("路径选择");
+		JMenuItem mntmNewMenuItem_1 = new JMenuItem("生成文档");
 		mntmNewMenuItem_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new MainPathCreate();
 			}
 		});
+		
+		JMenuItem menuItem = new JMenuItem("文件校验");
+		menuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new Filessss();
+			}
+		});
+		mnNewMenu.add(menuItem);
 		mnNewMenu.add(mntmNewMenuItem_1);
 	}
 }

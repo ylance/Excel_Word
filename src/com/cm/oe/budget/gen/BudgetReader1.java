@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -42,15 +43,17 @@ public class BudgetReader1 {
 		Cell cell = null;		
 		for (int i = row.getFirstCellNum(); i < row.getPhysicalNumberOfCells(); i++) {
 			cell = row.getCell(i);
-			double value = 0;
+			int value = 0;
 			if(cell.getCellType()==	HSSFCell.CELL_TYPE_FORMULA){
 				cell.setCellFormula(cell.toString());
-				value = e.evaluate(cell).getNumberValue();
+				value = (int) e.evaluate(cell).getNumberValue();
 			}
 			if(i==0){
 				ids.put(Integer.toString(i), cell.toString());
 			}else if(i>0&&cell.getCellType()==HSSFCell.CELL_TYPE_FORMULA){
-				ids.put(cell.toString(), Double.toString(value));
+				HSSFDataFormatter df = new HSSFDataFormatter();
+				String cellf = df.formatCellValue(cell);
+				ids.put(cellf.toString(), Integer.toString(value));
 			}
 		}
 		String zh = "";		
@@ -150,12 +153,11 @@ public class BudgetReader1 {
 		String values_inner = "";
 		Map<String, String> map_data = allDatas.get(zh);
 		for(String keys:b3Data.keySet()){
-			values_inner = "";
 			List<String> values = new ArrayList<String>();
 			key_index = b3Data.get(keys).get(1);
-			
 			values_inner = map_data.get(key_index);
 			if(values_inner.length()!=0&&!values_inner.equals("0.0")){
+				
 				values.add(b3Data.get(keys).get(0));
 				values.add(values_inner);
 				results.put(keys, values);
@@ -164,6 +166,12 @@ public class BudgetReader1 {
 		return results;
 	}
 	
+	public boolean isNumeric(String s) {  
+        if (s != null && !"".equals(s.trim()))  
+            return s.matches("^[0-9]*$");  
+        else  
+            return false;  
+    }  
 	
 	public String getZhFrom4GYsb() throws IOException{
 		
@@ -172,19 +180,20 @@ public class BudgetReader1 {
 		String results = "";
 		String result2 = "";
 		
-		FileInputStream fise = new FileInputStream(excelPath);
+		FileInputStream fise = new FileInputStream(Path);
 		HSSFWorkbook wb = new HSSFWorkbook(fise);
-		HSSFWorkbook wb2 = new HSSFWorkbook(new FileInputStream(excelPath2));
+		HSSFWorkbook wb2 = new HSSFWorkbook(new FileInputStream(path2));
 		
 		HSSFFormulaEvaluator e= new HSSFFormulaEvaluator(wb);
 		HSSFFormulaEvaluator e2= new HSSFFormulaEvaluator(wb2);
 		
 		//TODO: 将此处的文件名替换为从参数读取的文件名
 		String [] strArray = new String[2];
-		String[] splits = Path.split("\\\\");
-		String[] splits2 = path2.split("\\\\");
-		strArray[0] = splits[splits.length-1];
-		strArray[1] = splits2[splits2.length-1];
+		String[] paths = this.Path.split("\\\\");
+		strArray[0] = paths[paths.length-1];
+		String[] paths1 = this.path2.split("\\\\");
+		strArray[1] = paths1[paths1.length-1];
+
 		HSSFFormulaEvaluator[] evals = new HSSFFormulaEvaluator[2];
 		evals[0] = e;
 		evals[1] = e2;
@@ -199,13 +208,61 @@ public class BudgetReader1 {
 		}else if(cell2.getCellType()==HSSFCell.CELL_TYPE_STRING){
 			results = cell2.getStringCellValue();
 		}
-		if(results.contains("新建")){
-			int begin = results.indexOf(":");
-			int end = results.indexOf("新建");
+		//TL TLD TLFD    SXZH017TL   前面有7位   TL- conditions
+		//TL-1、TL-2、TL-3  TLD-1 TLD-2 TLD-3
+		if(results.contains("TLFD")){
+			int end = results.indexOf("TLFD");
+			end = end+4;
+			int begin = end-12;
 			result2 = results.substring(begin+1, end);
-		}else if(results.contains("共建")){
-			int begin = results.indexOf(":");
-			int end = results.indexOf("共建");
+		}else if(results.contains("TL-")){
+			int end = results.indexOf("TL-");
+			int count = 11;
+			boolean flag = true;
+			end = end+3;
+			System.out.println(results.substring(end-1, end));
+			for(int k=1; k<5; k++){
+				end = end+1;
+				System.out.println(results.substring(end-1, end));
+				flag = isNumeric(results.substring(end-1, end));
+				if(flag){
+					count++;
+				}else{
+					break;
+				}
+			}
+			int begin = end-count;
+			result2 = results.substring(begin+1, end);
+		}else if(results.contains("TLD-")){
+			int end = results.indexOf("TLD-");
+			int count = 12;
+			boolean flag = true;
+			end = end+4;
+			System.out.println(results.substring(end-1, end));
+			for(int k=1; k<5; k++){
+				end = end+1;
+				System.out.println(results.substring(end-1, end));
+				flag = isNumeric(results.substring(end-1, end));
+				if(flag){
+					count++;
+				}else{
+					break;
+				}
+			}
+			int begin = end-count;
+			result2 = results.substring(begin+1, end);
+		}else if(results.contains("TLD")){
+			int end = results.indexOf("TLD");
+			end = end+3;
+			int begin = end-11;
+			result2 = results.substring(begin+1, end);
+		}else if(results.contains("TL")){
+//			System.out.println(results);
+			int end = results.indexOf("TL");
+//			System.out.println(end);
+			end = end+2;
+//			System.out.println(results.substring(end-1, end));
+			int begin = end-10;
 			result2 = results.substring(begin+1, end);
 		}
 		wb2.close();
@@ -223,6 +280,7 @@ public class BudgetReader1 {
 		HSSFFormulaEvaluator e2= new HSSFFormulaEvaluator(wb2);
 		
 		String [] strArray = new String[2];
+
 		String[] splits = Path.split("\\\\");
 		String[] splits2 = path2.split("\\\\");
 		strArray[0] = splits[splits.length-1];
@@ -247,9 +305,18 @@ public class BudgetReader1 {
 					break;
 				}
 				//System.out.println(scell);
-				if(cell.getCellType()==	HSSFCell.CELL_TYPE_FORMULA){
+				/*if(cell.getCellType()==	HSSFCell.CELL_TYPE_FORMULA){
 					values = e.evaluate(cell).getStringValue();
-				}		
+				}*/		
+				if(cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC){
+					HSSFDataFormatter df = new HSSFDataFormatter();
+					String cellf = df.formatCellValue(cell);
+					values = cellf;
+				}else if(cell.getCellType()==HSSFCell.CELL_TYPE_STRING){
+					values = cell.getStringCellValue();
+				}else if(cell.getCellType() == HSSFCell.CELL_TYPE_BLANK){
+					values = "0";
+				}
 			}
 			if(flag){
 				break;
@@ -270,13 +337,18 @@ public class BudgetReader1 {
 	}*/
 	
 	public static void main(String[] args) {
-		String path1 = "testfiles\\ysb_final.xls";
-		String path2 = "testfiles\\3G4G工程基站预算基础信息表.xls";
-		BudgetReader1 ub = new BudgetReader1(path1, path2);
+		String path1 = "testfiles/ysb_final.xls";
+		String path2 = "testfiles/3G4G工程基站预算基础信息表.xls";
+		String path11 = "E:/Desktop/预算表/4G工程基站预算输出表9.xls";
+		String path21 = "E:/Desktop/3G4G工程基站预算基础信息表.xls";
+		BudgetReader1 ub = new BudgetReader1(path11, path21);
 		try {
 			Map<String, Map<String, String>> data_all = ub.get3G4Gjcxx(path2);
 			Map<String, List<String>> data_b3 = ub.getB3(path1);
 			Map<String, List<String>> datas_map = ub.getB3JData(data_all, data_b3, path1, path2);
+			System.out.println(datas_map);
+			String zh = ub.getZhFrom4GYsb();
+			//System.out.println(zh);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

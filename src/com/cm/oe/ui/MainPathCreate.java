@@ -6,6 +6,7 @@ import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,8 +30,7 @@ public class MainPathCreate {
 	public JTextField bText = null;
 	public JTextField cText = null;
 	public JTextField dText = null;
-	JProgressBar progressBar = null;
-	
+
 	/**
 	 * Launch the application.
 	 */
@@ -148,18 +148,18 @@ public class MainPathCreate {
 		});
 		frame.getContentPane().add(dButton);
 
-		JButton confirmButton = new JButton("确认路径选择");
+		JButton confirmButton = new JButton("生成文档");
 		confirmButton.setBounds(255, 319, 178, 23);
 		confirmButton.addActionListener(new ActionListener() {
-
+			JFrame frame1 = null;
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) throws NullPointerException {
 				if (aText == null || aText.getText().equals("") || bText.getText().equals("") || bText == null
 						|| cText.getText().equals("") || cText == null || dText.getText().equals("") || dText == null) {
 					JOptionPane.showMessageDialog(null, "请填写全部路径");
 					return;
 				} else {
-					int state = JOptionPane.showConfirmDialog(null, "确定选择的路径？"," ",JOptionPane.YES_NO_OPTION);
+					int state = JOptionPane.showConfirmDialog(null, "确定选择的路径？", " ", JOptionPane.YES_NO_OPTION);
 					if (state == 0) {
 						try {
 							boolean flag = false;
@@ -169,37 +169,54 @@ public class MainPathCreate {
 							String tablePath = "testfiles/tables.xls";
 							String excelPath = aText.getText();
 							ReadB3 rB3 = new ReadB3();
-							ReadExcel re = new ReadExcel();
+							ReadExcel re = new ReadExcel(excelPath);
 							Map<String, String> map = rB3.read(path1, path2);
-							List<String> zhs = re.getZH(excelPath);
+							List<String> zhs = re.getZH();
 							Set<String> keys = map.keySet();
 							BudgetWriter1 xwpf = null;
-							for (int i = 1; i < zhs.size(); i++) {
-								//System.out.println(keys.contains(zhs.get(i).trim()));
-								if(keys.contains(zhs.get(i).trim())){
-								String Path = map.get(zhs.get(i).trim());
-								xwpf = new BudgetWriter1(Path, path2, tablePath, excelPath, output);
-								xwpf.testReadByDoc();
-								}else if(!keys.contains(zhs.get(i).trim())){
-									JOptionPane.showMessageDialog(frame, "汇总表第"+(i+1)+"行，请输入正确的站号！");
-								throw NullPointerException;
-								}
-							}
 							frame.setVisible(false);
-							Frame frame1=new MainFrame();
-							Label label =new Label();
+							 frame1 = new MainFrame();
+							Label label = new Label();
 							label.setText("Please waite for a minite...");
 							label.setFont(new Font("宋体", Font.PLAIN, 18));
 							frame1.add(label);
 							frame1.setVisible(true);
-
+							frame1.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+							for (int i = 1; i < zhs.size(); i++) {
+								String zh = zhs.get(i).trim();
+								//System.out.println(keys.contains(zh));
+								if (keys.contains(zh)) {
+									String Path = map.get(zh);
+									xwpf = new BudgetWriter1(Path, zh, path2, tablePath, excelPath, output);
+									xwpf.testReadByDoc();
+								} else if (!keys.contains(zhs.get(i).trim())) {
+									JOptionPane.showMessageDialog(frame, "汇总表第" + (i + 1) + "行，请输入正确的站号！");
+									throw NullPointerException;
+								}
+							}
 							
+
 							flag = true;
 							if (flag) {
 								frame1.setVisible(false);
 								frame.setVisible(true);
 								JOptionPane.showMessageDialog(frame, "生成完毕！");
 							}
+						} catch (NullPointerException e1) {
+							frame1.setVisible(false);
+							frame.setVisible(true);
+							e1.printStackTrace();
+							
+						} catch (RuntimeException e1) {
+							frame1.setVisible(false);
+							JOptionPane.showMessageDialog(frame, "出错了，请选择正确的文件！");
+							frame.setVisible(true);
+							e1.printStackTrace();
+						}catch (FileNotFoundException e2) {
+							frame1.setVisible(false);
+							JOptionPane.showMessageDialog(frame, "请关闭已打开的word文档！");
+							frame.setVisible(true);
+							e2.printStackTrace();
 						} catch (Exception e1) {
 							e1.printStackTrace();
 						}
